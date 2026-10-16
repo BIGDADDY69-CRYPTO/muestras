@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pronto Estudio · Simulador</title>
+<meta name="description" content="Probalo con tus productos: tu kit del Cyber, tu Instagram de la semana que viene y tu catálogo de regalos empresariales, armados en el momento.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{--bg:#f5f3ef;--tinta:#16181d;--gris:#6b6f78;--linea:#e4e0d8;--card:#fff;--acento:#1f8a5b;--acento2:#e0f3ea;--rojo:#c0392b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121317;--tinta:#f1f1f3;--gris:#a2a6b0;--linea:#2a2c33;--card:#1b1d23;--acento:#3ccf8e;--acento2:#173a2b;--rojo:#ff6b5e}}
+:root[data-theme="dark"]{--bg:#121317;--tinta:#f1f1f3;--gris:#a2a6b0;--linea:#2a2c33;--card:#1b1d23;--acento:#3ccf8e;--acento2:#173a2b;--rojo:#ff6b5e}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--tinta);line-height:1.45}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+header{padding:22px 0;display:flex;align-items:center;justify-content:space-between}
+.marca{font-weight:900;font-size:20px;letter-spacing:-.02em}.marca b{color:var(--acento)}
+.hero{padding:26px 0 30px}
+.hero h1{font-size:clamp(32px,6vw,58px);line-height:1.02;font-weight:900;letter-spacing:-.03em;max-width:820px}
+.hero h1 span{color:var(--acento)}
+.hero p{font-size:clamp(17px,2.2vw,21px);color:var(--gris);margin-top:16px;max-width:680px}
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:26px}
+.chip{background:var(--card);border:2px solid var(--linea);border-radius:18px;padding:16px 18px;text-align:left;cursor:pointer;
+ font:inherit;color:inherit;transition:.15s}
+.chip:hover,.chip.on{border-color:var(--acento)}
+.chip b{display:block;font-size:17px}.chip span{font-size:14px;color:var(--gris)}
+section.sim{display:none;padding:10px 0 40px}section.sim.on{display:block}
+.sim h2{font-size:clamp(24px,3.6vw,34px);font-weight:900;letter-spacing:-.02em}
+.sim .bajada{color:var(--gris);margin:6px 0 20px}
+.grid2{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:820px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.grid2>*,.form,.prod,label{min-width:0}
+input[type=file]{max-width:100%;width:100%}
+.form{background:var(--card);border:1px solid var(--linea);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px}
+label{font-size:14px;font-weight:700;display:flex;flex-direction:column;gap:6px}
+input[type=text],input[type=number],select{font:inherit;padding:11px 12px;border-radius:12px;border:1px solid var(--linea);background:var(--bg);color:var(--tinta);width:100%}
+input[type=file]{font-size:14px}
+input[type=color]{width:52px;height:38px;border:none;background:none}
+.fila{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:8px}
+.prods{display:flex;flex-direction:column;gap:10px}
+.prod{border:1px dashed var(--linea);border-radius:14px;padding:10px;display:grid;gap:6px}
+.btn{font:inherit;font-weight:800;border:none;border-radius:14px;padding:14px 18px;cursor:pointer;background:var(--acento);color:#fff;text-align:center;text-decoration:none;display:inline-block}
+.btn.sec{background:transparent;color:var(--tinta);border:2px solid var(--linea)}
+.prev{background:var(--card);border:1px solid var(--linea);border-radius:20px;padding:14px}
+.marco{width:100%;overflow:hidden;border-radius:14px;position:relative}
+.lienzo{width:1080px;height:1350px;transform-origin:top left;position:absolute;top:0;left:0;overflow:hidden}
+.acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.cta{margin-top:16px;background:var(--acento2);border-radius:18px;padding:18px 20px}
+.cta b{font-size:18px;display:block;margin-bottom:4px}.cta p{color:var(--gris);font-size:15px;margin-bottom:12px}
+.nota{font-size:13px;color:var(--gris)}
+footer{border-top:1px solid var(--linea);padding:26px 0 40px;color:var(--gris);font-size:14px}
+/* ---------- piezas (siempre 1080 de ancho, se escalan para la vista previa) ---------- */
+.kit{display:flex;flex-direction:column;align-items:center;color:#fff;font-family:Inter,sans-serif;text-align:center;padding-top:70px}
+.kit .t{font-size:34px;letter-spacing:.32em;font-weight:800;text-transform:uppercase}
+.kit .ev{font-size:150px;line-height:.92;font-weight:900;letter-spacing:-.02em;margin-top:40px;text-transform:uppercase}
+.kit .fe{margin-top:26px;background:#fff;color:#111;border-radius:99px;padding:12px 34px;font-size:36px;font-weight:800}
+.kit .foto{margin-top:44px;width:520px;height:520px;background:#fff;border-radius:44px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.kit .foto img{max-width:86%;max-height:86%;object-fit:contain}
+.kit .fr{margin-top:44px;font-size:44px;font-weight:900}
+.kit .web{margin-top:26px;border:3px solid #fff;border-radius:99px;padding:14px 40px;font-size:34px;font-weight:800}
+.ph{color:#999;font-size:30px;font-weight:700}
+.ig{background:#0f1115;color:#fff;font-family:Inter,sans-serif;padding:46px 54px}
+.ig .k{font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:#8b93a7;font-weight:800}
+.ig h3{font-size:52px;line-height:1.06;font-weight:900;margin-top:10px}.ig h3 b{color:#5ee1a0}
+.ig .cols{display:flex;gap:26px;margin-top:34px}
+.ig .tel{flex:1;background:#fff;color:#111;border-radius:32px;padding:22px 18px 18px;position:relative}
+.ig .etq{position:absolute;top:-16px;left:20px;font-size:18px;font-weight:900;padding:6px 14px;border-radius:99px}
+.ig .hoy .etq{background:#ff5a5f;color:#fff}.ig .prox .etq{background:#5ee1a0;color:#0f1115}
+.ig .pf{display:flex;align-items:center;gap:12px;margin:8px 0 14px}
+.ig .av{width:58px;height:58px;border-radius:50%;background:#e9ecf2 center/cover;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:24px;color:#666;box-shadow:0 0 0 3px #d62976}
+.ig .hoy .av{box-shadow:0 0 0 3px #cfd3da}
+.ig .u{font-weight:800;font-size:19px}.ig .n{font-size:15px;color:#666}
+.ig .g{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.ig .c{aspect-ratio:4/5;background:#e9ecf2 center/cover;position:relative;border-radius:4px;overflow:hidden}
+.ig .c .tt{position:absolute;left:0;right:0;bottom:0;padding:20px 7px 7px;font-size:13px;font-weight:800;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.75))}
+.ig .c .h{position:absolute;top:6px;left:6px;font-size:11px;font-weight:900;background:#5ee1a0;color:#0f1115;padding:3px 7px;border-radius:99px}
+.ig .v{background:repeating-linear-gradient(45deg,#f1f2f5,#f1f2f5 10px,#e7e9ee 10px,#e7e9ee 20px)}
+.ig .d{margin-top:14px;font-size:18px;font-weight:800;text-align:center}
+.ig .hoy .d{color:#d93a3f}.ig .prox .d{color:#138a52}
+.ig .cal{margin-top:30px;background:#181b22;border-radius:24px;padding:22px 24px}
+.ig .cal .tt2{font-size:20px;color:#8b93a7;font-weight:800;margin-bottom:12px}
+.ig .dias{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.ig .dd{background:#222631;border-radius:14px;padding:12px 0;text-align:center;font-size:19px;font-weight:800}
+.ig .pt{display:inline-block;width:11px;height:11px;border-radius:50%;margin:8px 2px 0}
+.ig .f{background:#5ee1a0}.ig .s{background:#d62976}
+.ig .pasos{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.ig .pa{background:#181b22;border-radius:20px;padding:18px}
+.ig .pa i{font-style:normal;width:34px;height:34px;border-radius:50%;background:#5ee1a0;color:#0f1115;font-weight:900;display:flex;align-items:center;justify-content:center}
+.ig .pa b{display:block;font-size:20px;margin:10px 0 4px}.ig .pa span{font-size:16px;color:#a9b0c0}
+.rg{background:#fbf8f3;color:#1f1b18;font-family:Inter,sans-serif;padding:56px 60px}
+.rg .cab{display:flex;gap:22px;align-items:center}
+.rg .lg{width:96px;height:96px;border-radius:20px;background:#fff center/contain no-repeat;flex:none}
+.rg h3{font-size:54px;line-height:1.04;font-weight:900}
+.rg .sb{font-size:23px;color:#6b625a;margin:12px 0 26px}
+.rg .caja{display:flex;gap:22px;background:#fff;border-radius:26px;padding:20px;margin-bottom:20px;align-items:center}
+.rg .fs{display:flex;gap:8px;flex:none}.rg .fs div{width:140px;height:186px;border-radius:14px;background:#eee center/cover}
+.rg .cn{font-size:34px;font-weight:900}.rg .pa2{font-size:20px;color:#6b625a;margin:2px 0 8px}
+.rg .li{font-size:19px;color:#3b342e}
+.rg .tot{margin-left:auto;text-align:right;flex:none}.rg .tot b{display:block;font-size:34px}.rg .tot span{font-size:16px;color:#6b625a}
+.rg .bar{position:absolute;left:60px;right:60px;bottom:50px;color:#fff;border-radius:22px;padding:22px 28px;font-size:24px;font-weight:800;display:flex;justify-content:space-between}
+.test{display:flex;flex-direction:column;gap:12px}
+.q{background:var(--card);border:1px solid var(--linea);border-radius:16px;padding:16px}
+.q b{display:block;margin-bottom:10px}
+.q .op{display:flex;gap:8px;flex-wrap:wrap}
+.q button{font:inherit;padding:9px 16px;border-radius:99px;border:2px solid var(--linea);background:transparent;color:var(--tinta);cursor:pointer;font-weight:700}
+.q button.on{border-color:var(--acento);background:var(--acento2)}
+.res{background:var(--card);border:2px solid var(--acento);border-radius:18px;padding:20px;display:none}
+.res.on{display:block}.res h3{font-size:22px;margin-bottom:8px}.res li{margin:6px 0 6px 18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="marca">Pronto<b>.</b>Estudio</div><a class="btn sec" id="hdrWa" target="_blank" rel="noopener">Hablemos</a></header>
+
+<div class="hero">
+ <h1>Probalo con <span>tus productos</span>. Lo ves funcionando ahora, antes de hablar con nadie.</h1>
+ <p>Subí tus fotos y en segundos ves tu kit del Cyber, tu Instagram de la semana que viene o tu catálogo de regalos empresariales. Si te gusta, te lo dejo completo y andando en 24 a 72 h.</p>
+ <div class="chips">
+  <button class="chip on" data-sim="kit"><b>🛍️ Tu kit del Cyber</b><span>La pieza de la fecha con tu producto</span></button>
+  <button class="chip" data-sim="ig"><b>📲 Tu Instagram en piloto automático</b><span>Tu perfil la semana que viene</span></button>
+  <button class="chip" data-sim="rg"><b>🎁 Tus regalos empresariales</b><span>3 cajas con tus precios</span></button>
+  <button class="chip" data-sim="test"><b>⚖️ ¿Tu tienda está en regla?</b><span>Test de 30 segundos</span></button>
+ </div>
+</div>
+
+<!-- ============ KIT ============ -->
+<section class="sim on" id="sim-kit">
+ <h2>Tu pieza de la fecha, con tu producto</h2>
+ <p class="bajada">El kit completo son 9 piezas en 3 formatos, el banner de tu home y los mensajes de «arrancó» y «últimas horas».</p>
+ <div class="grid2">
+  <div class="form">
+   <label>Tu marca<input type="text" id="kNom" value="Tu marca" maxlength="40"></label>
+   <label>Tu web<input type="text" id="kWeb" value="tumarca.com.ar" maxlength="40"></label>
+   <label>Fecha<select id="kEv">
+    <option value="Cyber Monday|2 al 4 de noviembre|Se viene el Cyber Monday">Cyber Monday · 2 al 4/11</option>
+    <option value="Navidad|Pedidos hasta el 20/12|Regalos que llegan a tiempo">Navidad</option>
+    <option value="Black Friday|Este viernes|Los mejores precios del año">Black Friday</option>
+   </select></label>
+   <label>Foto de tu producto<input type="file" id="kFoto" accept="image/*"></label>
+   <div class="fila"><label>Color de tu marca<input type="color" id="kCol" value="#1c1c1c"></label>
+    <label>Formato<select id="kFmt"><option value="45">Feed 4:5</option><option value="916">Historia 9:16</option></select></label></div>
+   <p class="nota">Tus fotos no salen de tu navegador.</p>
+  </div>
+  <div>
+   <div class="prev"><div class="marco" id="kMarco"><div class="lienzo kit" id="kPieza"></div></div>
+    <div class="acciones"><button class="btn" data-bajar="kPieza">Descargar la pieza</button></div></div>
+   <div class="cta"><b>¿La querés completa para tu tienda?</b><p>Te dejo las 9 piezas, el banner y los mensajes en 72 h, hechos con tus productos.</p>
+    <a class="btn" data-wa="kit" target="_blank" rel="noopener">Quiero el kit completo →</a></div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ IG ============ -->
+<section class="sim" id="sim-ig">
+ <h2>Tu Instagram la semana que viene, sin que nadie lo toque</h2>
+ <p class="bajada">Un sistema que cada semana encuentra qué publicar (tu web, tu catálogo, lo nuevo de las marcas que representás), lo arma con tu marca y lo publica solo.</p>
+ <div class="grid2">
+  <div class="form">
+   <label>Tu usuario de Instagram<input type="text" id="iUsr" value="tumarca" maxlength="30"></label>
+   <label>Tu negocio<input type="text" id="iNom" value="Tu Marca" maxlength="40"></label>
+   <label>¿Hace cuántos días fue tu último posteo?<input type="number" id="iDias" value="30" min="0" max="999"></label>
+   <div class="prods" id="iProds"></div>
+   <p class="nota">Subí 3 fotos de tus productos o tu local. Tus fotos no salen de tu navegador.</p>
+  </div>
+  <div>
+   <div class="prev"><div class="marco" id="iMarco"><div class="lienzo ig" id="iPieza"></div></div>
+    <div class="acciones"><button class="btn" data-bajar="iPieza">Descargar</button></div></div>
+   <div class="cta"><b>¿Lo querés andando de verdad?</b><p>Lo dejo publicando solo en 72 h: feed e historias, con tu tono y en tus horarios. Si algo no te gusta, lo frenás con un mensaje.</p>
+    <a class="btn" data-wa="ig" target="_blank" rel="noopener">Quiero mi Instagram en automático →</a></div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ REGALOS ============ -->
+<section class="sim" id="sim-rg">
+ <h2>Tu catálogo de regalos empresariales, armado con tus precios</h2>
+ <p class="bajada">Las empresas definen sus regalos de fin de año en noviembre. Con este catálogo les vendés por cantidad.</p>
+ <div class="grid2">
+  <div class="form">
+   <label>Tu negocio<input type="text" id="rNom" value="Tu Tienda" maxlength="40"></label>
+   <div class="fila"><label>Color<input type="color" id="rCol" value="#7a1f2b"></label><label>Logo<input type="file" id="rLogo" accept="image/*"></label></div>
+   <div class="prods" id="rProds"></div>
+   <p class="nota">Cargá 6 productos con foto y precio. Las cajas se arman solas por rango de precio. Tus fotos no salen de tu navegador.</p>
+  </div>
+  <div>
+   <div class="prev"><div class="marco" id="rMarco"><div class="lienzo rg" id="rPieza"></div></div>
+    <div class="acciones"><button class="btn" data-bajar="rPieza">Descargar el catálogo</button></div></div>
+   <div class="cta"><b>¿Lo querés terminado para mandar a empresas?</b><p>Te lo dejo en 48 h: el PDF con tus condiciones por cantidad, la página de pedidos por WhatsApp, el posteo y la historia, y el mail para tu lista.</p>
+    <a class="btn" data-wa="rg" target="_blank" rel="noopener">Quiero mi catálogo →</a></div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ TEST ============ -->
+<section class="sim" id="sim-test">
+ <h2>¿Tu tienda online tiene lo que hoy piden las normas de compra online?</h2>
+ <p class="bajada">3 preguntas. Revisión técnica orientativa, no es asesoramiento legal.</p>
+ <div class="grid2">
+  <div class="test" id="tPregs"></div>
+  <div><div class="res" id="tRes"></div></div>
+ </div>
+</section>
+</div>
+
+<footer><div class="wrap">Pronto Estudio · Servicios de pago único para tiendas y comercios de Argentina, entregados en 24 a 72 h.
+<br>Escribime por WhatsApp: <a id="ftWa" target="_blank" rel="noopener">11 2468-9346</a></div></footer>
+
+<script>
+const WA = '5491124689346'
+const $ = (s) => document.querySelector(s)
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+const plata = (n) => '$ ' + Math.round(n).toLocaleString('es-AR')
+const leerFoto = (inp, cb) => inp.addEventListener('change', () => { const f = inp.files?.[0]; if (f) cb(URL.createObjectURL(f)) })
+const wa = (t) => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`
+$('#hdrWa').href = wa('Hola Arian! Vi el simulador de Pronto Estudio y quiero hablar.')
+$('#ftWa').href = $('#hdrWa').href
+
+// ---------- pestañas ----------
+document.querySelectorAll('.chip').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('.chip').forEach((x) => x.classList.toggle('on', x === b))
+  document.querySelectorAll('.sim').forEach((s) => s.classList.toggle('on', s.id === 'sim-' + b.dataset.sim))
+  escalar()
+  try { localStorage.setItem('sim', b.dataset.sim) } catch {}
+}))
+
+// ---------- escala de las vistas previas ----------
+function escalar() {
+  document.querySelectorAll('.marco').forEach((m) => {
+    const l = m.querySelector('.lienzo'); if (!l || !m.offsetWidth) return
+    const k = m.offsetWidth / 1080
+    l.style.transform = `scale(${k})`
+    m.style.height = (l.offsetHeight * k) + 'px'
+  })
+}
+addEventListener('resize', escalar)
+
+// ---------- descargar ----------
+document.querySelectorAll('[data-bajar]').forEach((b) => b.addEventListener('click', async () => {
+  const el = document.getElementById(b.dataset.bajar)
+  const t = el.style.transform; el.style.transform = 'none'
+  b.textContent = 'Generando…'
+  try {
+    const c = await html2canvas(el, { scale: 1, width: el.offsetWidth, height: el.offsetHeight, useCORS: true, backgroundColor: null })
+    const a = document.createElement('a'); a.download = 'pronto-estudio.png'; a.href = c.toDataURL('image/png'); a.click()
+  } finally { el.style.transform = t; b.textContent = 'Descargar' }
+}))
+
+// ---------- KIT ----------
+let kFoto = null
+leerFoto($('#kFoto'), (u) => { kFoto = u; kit() })
+;['#kNom', '#kWeb', '#kEv', '#kCol', '#kFmt'].forEach((s) => $(s).addEventListener('input', kit))
+function kit() {
+  const [ev, fe, fr] = $('#kEv').value.split('|')
+  const el = $('#kPieza'), alto = $('#kFmt').value === '916' ? 1920 : 1350
+  el.style.height = alto + 'px'
+  const c = $('#kCol').value
+  el.style.background = `radial-gradient(120% 80% at 50% 0%, ${c}cc, ${c} 55%, #0b0b0d)`
+  el.style.paddingTop = alto > 1400 ? '220px' : '70px'
+  el.innerHTML = `<div class="t">${esc($('#kNom').value)}</div><div class="ev">${esc(ev).replace(' ', '<br>')}</div>
+   <div class="fe">${esc(fe)}</div><div class="foto">${kFoto ? `<img src="${kFoto}">` : '<span class="ph">Tu producto acá</span>'}</div>
+   <div class="fr">${esc(fr)}</div><div class="web">Comprá en ${esc($('#kWeb').value)}</div>`
+  escalar()
+  $('[data-wa="kit"]').href = wa(`Hola Arian! Probé el simulador del kit de ${ev} con ${$('#kNom').value} (${$('#kWeb').value}). Quiero el kit completo.`)
+}
+
+// ---------- IG ----------
+const iF = [null, null, null], iT = ['Llegó lo nuevo', 'Así lo usan', 'Detrás de escena']
+$('#iProds').innerHTML = [0, 1, 2].map((k) => `<div class="prod"><label>Foto ${k + 1}<input type="file" accept="image/*" data-i="${k}"></label>
+  <input type="text" value="${iT[k]}" data-it="${k}" maxlength="34"></div>`).join('')
+document.querySelectorAll('#iProds [data-i]').forEach((inp) => leerFoto(inp, (u) => { iF[+inp.dataset.i] = u; ig() }))
+document.querySelectorAll('#iProds [data-it]').forEach((inp) => inp.addEventListener('input', () => { iT[+inp.dataset.it] = inp.value; ig() }))
+;['#iUsr', '#iNom', '#iDias'].forEach((s) => $(s).addEventListener('input', ig))
+function ig() {
+  const u = esc($('#iUsr').value.replace(/^@/, '')), n = esc($('#iNom').value), d = +$('#iDias').value || 0
+  const pf = `<div class="pf"><div class="av">${esc((n[0] || '?').toUpperCase())}</div><div><div class="u">${u}</div><div class="n">${n}</div></div></div>`
+  const v = '<div class="c v"></div>'.repeat(6), hs = ['Lun 12:30', 'Mié 19:30', 'Vie 12:30']
+  const nuevos = [0, 1, 2].map((k) => iF[k] ? `<div class="c" style="background-image:url('${iF[k]}')"><span class="h">📅 ${hs[k]}</span><span class="tt">${esc(iT[k])}</span></div>` : `<div class="c v"><span class="h">📅 ${hs[k]}</span></div>`).join('')
+  const dias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((x, k) => `<div class="dd">${x}<br><span class="pt s"></span>${[0, 2, 4].includes(k) ? '<span class="pt f"></span>' : ''}</div>`).join('')
+  $('#iPieza').innerHTML = `<div class="k">Instagram en piloto automático</div><h3>Tu Instagram, <b>la semana que viene</b>,<br>sin que nadie lo toque</h3>
+   <div class="cols"><div class="tel hoy"><span class="etq">HOY</span>${pf}<div class="g">${v}</div><div class="d">${d ? `Último posteo: hace ${d} días` : 'Depende de que alguien se acuerde'}</div></div>
+   <div class="tel prox"><span class="etq">LA SEMANA QUE VIENE</span>${pf}<div class="g">${nuevos}${'<div class="c v"></div>'.repeat(3)}</div><div class="d">3 posteos + historias todos los días</div></div></div>
+   <div class="cal"><div class="tt2">Así se publica solo, cada semana</div><div class="dias">${dias}</div></div>
+   <div class="pasos"><div class="pa"><i>1</i><b>Encuentra qué publicar</b><span>Tu web, tu catálogo y lo nuevo de tus marcas.</span></div>
+   <div class="pa"><i>2</i><b>Lo arma con tu marca</b><span>Imagen, texto con tu tono e historias.</span></div>
+   <div class="pa"><i>3</i><b>Lo publica solo</b><span>En tus horarios. Lo frenás con un mensaje.</span></div></div>`
+  escalar()
+  $('[data-wa="ig"]').href = wa(`Hola Arian! Probé el simulador de Instagram en piloto automático con @${$('#iUsr').value.replace(/^@/, '')}. Quiero dejarlo andando.`)
+}
+
+// ---------- REGALOS ----------
+const rP = [['Producto 1', 9000], ['Producto 2', 12000], ['Producto 3', 18000], ['Producto 4', 24000], ['Producto 5', 32000], ['Producto 6', 45000]].map(([n, p]) => ({ n, p, f: null }))
+let rLogo = null
+$('#rProds').innerHTML = rP.map((x, k) => `<div class="prod"><input type="file" accept="image/*" data-r="${k}">
+  <div class="fila"><input type="text" value="${x.n}" data-rn="${k}" maxlength="40"><input type="number" value="${x.p}" data-rp="${k}" min="0"></div></div>`).join('')
+document.querySelectorAll('#rProds [data-r]').forEach((inp) => leerFoto(inp, (u) => { rP[+inp.dataset.r].f = u; rg() }))
+document.querySelectorAll('#rProds [data-rn]').forEach((inp) => inp.addEventListener('input', () => { rP[+inp.dataset.rn].n = inp.value; rg() }))
+document.querySelectorAll('#rProds [data-rp]').forEach((inp) => inp.addEventListener('input', () => { rP[+inp.dataset.rp].p = +inp.value || 0; rg() }))
+leerFoto($('#rLogo'), (u) => { rLogo = u; rg() })
+;['#rNom', '#rCol'].forEach((s) => $(s).addEventListener('input', rg))
+function rg() {
+  const ps = [...rP].sort((a, b) => a.p - b.p)
+  const cajas = [['Detalle', 'Para todo el equipo', ps.slice(0, 2)], ['Clásica', 'Clientes y proveedores', ps.slice(2, 4)], ['Premium', 'Directivos y cuentas clave', ps.slice(4, 6)]]
+  const col = $('#rCol').value, n = esc($('#rNom').value)
+  const fondo = (f) => f ? `background-image:url('${f}')` : ''
+  $('#rPieza').innerHTML = `<div class="cab">${rLogo ? `<div class="lg" style="${fondo(rLogo)}"></div>` : ''}<h3>Regalos empresariales<br>${n}</h3></div>
+   <div class="sb">3 cajas armadas con sus productos y sus precios · fin de año</div>
+   ${cajas.map(([cn, pa, it]) => `<div class="caja"><div class="fs">${it.map((p) => `<div style="${fondo(p.f)}"></div>`).join('')}</div>
+    <div><div class="cn" style="color:${col}">Caja ${cn}</div><div class="pa2">${pa}</div><div class="li">${it.map((p) => esc(p.n)).join(' · ')}</div></div>
+    <div class="tot"><b>${plata(it.reduce((s, p) => s + p.p, 0))}</b><span>por caja</span></div></div>`).join('')}
+   <div class="bar" style="background:${col}"><span>Pedidos por cantidad, con logo de la empresa</span><span>→ WhatsApp</span></div>`
+  escalar()
+  $('[data-wa="rg"]').href = wa(`Hola Arian! Probé el simulador de regalos empresariales con ${$('#rNom').value}. Quiero el catálogo terminado.`)
+}
+
+// ---------- TEST ----------
+const PREGS = [
+  ['¿Tu tienda tiene el link «Botón de arrepentimiento» a la vista desde la página de inicio?', 'arre'],
+  ['¿Se puede pedir el arrepentimiento sin registrarse, y le llega al cliente un código de la solicitud?', 'cod'],
+  ['¿Tus fichas muestran, en letra más chica, el «Precio sin impuestos nacionales»?', 'imp'],
+]
+const resp = {}
+$('#tPregs').innerHTML = PREGS.map(([q, k]) => `<div class="q"><b>${q}</b><div class="op">
+  <button data-k="${k}" data-v="si">Sí</button><button data-k="${k}" data-v="no">No</button><button data-k="${k}" data-v="ns">No sé</button></div></div>`).join('')
+  + '<p class="nota">Se basa en la Disposición 954/2025 (botón de arrepentimiento) y la Ley 27.743 con la Resolución 4/2025 (precio sin impuestos nacionales).</p>'
+document.querySelectorAll('#tPregs button').forEach((b) => b.addEventListener('click', () => {
+  resp[b.dataset.k] = b.dataset.v
+  document.querySelectorAll(`#tPregs button[data-k="${b.dataset.k}"]`).forEach((x) => x.classList.toggle('on', x === b))
+  if (Object.keys(resp).length === PREGS.length) test()
+}))
+function test() {
+  const txt = { arre: 'Link «Botón de arrepentimiento» a la vista desde el inicio (Disp. 954/2025).', cod: 'Arrepentimiento sin registro y código de la solicitud en 24 h (Disp. 954/2025).', imp: '«Precio sin impuestos nacionales» junto al precio final (Ley 27.743 art. 99 · Res. 4/2025).' }
+  const falta = Object.entries(resp).filter(([, v]) => v !== 'si').map(([k]) => k)
+  const r = $('#tRes'); r.classList.add('on')
+  r.innerHTML = falta.length
+    ? `<h3>Para revisar: ${falta.length} de 3</h3><ul>${falta.map((k) => `<li>${txt[k]}</li>`).join('')}</ul>
+       <div class="cta"><b>Te lo dejo instalado en 24 h</b><p>El botón con su formulario y el código automático, y el precio sin impuestos en todas las fichas. Implementación técnica, no asesoramiento legal.</p>
+       <a class="btn" target="_blank" rel="noopener" href="${wa('Hola Arian! Hice el test de tienda en regla y me faltan ' + falta.length + ' puntos. Quiero que me lo dejes instalado.')}">Que me lo dejen resuelto →</a></div>`
+    : '<h3>¡Bien! Tu tienda tiene las 3 cosas.</h3><p class="nota">Si querés, te la reviso igual en detalle (el precio sin impuestos tiene que estar también en colecciones y carrito).</p>'
+}
+
+// ---------- arranque ----------
+kit(); ig(); rg()
+try { const s = new URLSearchParams(location.search).get('s') || localStorage.getItem('sim'); if (s) document.querySelector(`.chip[data-sim="${s}"]`)?.click() } catch {}
+setTimeout(escalar, 300)
+</script>
+</body>
+</html>
