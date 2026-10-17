@@ -215,7 +215,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 const plata = (n) => '$ ' + Math.round(n).toLocaleString('es-AR')
 const leerFoto = (inp, cb) => inp.addEventListener('change', () => { const f = inp.files?.[0]; if (f) cb(URL.createObjectURL(f)) })
 const wa = (t) => `https://wa.me/${WA}?text=${encodeURIComponent(t)}`
-$('#hdrWa').href = wa('Hola Arian! Vi el simulador de Pronto Estudio y quiero hablar.')
+$('#hdrWa').href = wa('Hola Arian! Vi el simulador de Pronto Estudio y quiero que me armen algo. (PE-WEB)')
 $('#ftWa').href = $('#hdrWa').href
 
 // ---------- pestañas ----------
@@ -263,7 +263,7 @@ function kit() {
    <div class="fe">${esc(fe)}</div><div class="foto">${kFoto ? `<img src="${kFoto}">` : '<span class="ph">Tu producto acá</span>'}</div>
    <div class="fr">${esc(fr)}</div><div class="web">Comprá en ${esc($('#kWeb').value)}</div>`
   escalar()
-  $('[data-wa="kit"]').href = wa(`Hola Arian! Probé el simulador del kit de ${ev} con ${$('#kNom').value} (${$('#kWeb').value}). Quiero el kit completo.`)
+  $('[data-wa="kit"]').href = wa(`Hola Arian! Probé el simulador del kit de ${ev} con ${$('#kNom').value} (${$('#kWeb').value}). Quiero el kit completo. (PE-KIT)`)
 }
 
 // ---------- IG ----------
@@ -287,7 +287,7 @@ function ig() {
    <div class="pa"><i>2</i><b>Lo arma con tu marca</b><span>Imagen, texto con tu tono e historias.</span></div>
    <div class="pa"><i>3</i><b>Lo publica solo</b><span>En tus horarios. Lo frenás con un mensaje.</span></div></div>`
   escalar()
-  $('[data-wa="ig"]').href = wa(`Hola Arian! Probé el simulador de Instagram en piloto automático con @${$('#iUsr').value.replace(/^@/, '')}. Quiero dejarlo andando.`)
+  $('[data-wa="ig"]').href = wa(`Hola Arian! Probé el simulador de Instagram en piloto automático con @${$('#iUsr').value.replace(/^@/, '')}. Quiero dejarlo andando. (PE-IG)`)
 }
 
 // ---------- REGALOS ----------
@@ -312,7 +312,7 @@ function rg() {
     <div class="tot"><b>${plata(it.reduce((s, p) => s + p.p, 0))}</b><span>por caja</span></div></div>`).join('')}
    <div class="bar" style="background:${col}"><span>Pedidos por cantidad, con logo de la empresa</span><span>→ WhatsApp</span></div>`
   escalar()
-  $('[data-wa="rg"]').href = wa(`Hola Arian! Probé el simulador de regalos empresariales con ${$('#rNom').value}. Quiero el catálogo terminado.`)
+  $('[data-wa="rg"]').href = wa(`Hola Arian! Probé el simulador de regalos empresariales con ${$('#rNom').value}. Quiero el catálogo terminado. (PE-RG)`)
 }
 
 // ---------- TEST ----------
@@ -337,7 +337,7 @@ function test() {
   r.innerHTML = falta.length
     ? `<h3>Para revisar: ${falta.length} de 3</h3><ul>${falta.map((k) => `<li>${txt[k]}</li>`).join('')}</ul>
        <div class="cta"><b>Te lo dejo instalado en 24 h</b><p>El botón con su formulario y el código automático, y el precio sin impuestos en todas las fichas. Implementación técnica, no asesoramiento legal.</p>
-       <a class="btn" target="_blank" rel="noopener" href="${wa('Hola Arian! Hice el test de tienda en regla y me faltan ' + falta.length + ' puntos. Quiero que me lo dejes instalado.')}">Que me lo dejen resuelto →</a></div>`
+       <a class="btn" target="_blank" rel="noopener" href="${wa('Hola Arian! Hice el test de tienda en regla y me faltan ' + falta.length + ' puntos. Quiero que me lo dejes instalado. (PE-TEST)')}">Que me lo dejen resuelto →</a></div>`
     : '<h3>¡Bien! Tu tienda tiene las 3 cosas.</h3><p class="nota">Si querés, te la reviso igual en detalle (el precio sin impuestos tiene que estar también en colecciones y carrito).</p>'
 }
 
